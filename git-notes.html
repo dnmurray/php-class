@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>Git Notes</title>
+</head>
+<body>
+    <h3>Git Process for Solving a Problem</h3>
+    <pre>
+        <code>
+# start on master
+$ git checkout master
+
+# get lastest copy of repo
+$ git pull origin master
+
+# create a new branch to work on  (xxx is your initials)
+$ git checkout -b xxx_branch_name
+
+# do work, make code changes, when done
+$ git add -A
+$ git commit -m "a meaningful message"
+$ git push origin <i>branch_name</i>
+
+# git docs
+$ man git
+# or man git-command, e.g.
+$ man git-add
+
+# throw away all changes (permanent)
+$ git reset --hard
+        </code>
+    </pre>
+</body>
+</html>
+
