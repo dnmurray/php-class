@@ -12,7 +12,7 @@
 
 <body>
 	<div class="main-wrap">
-	<a href="room.php"></a>
+	<a href="room.php">Add a Room</a>
 	</div>	
 </body>
 
