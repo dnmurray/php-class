@@ -37,6 +37,24 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(room_update($room), 1);
   }
 
+  function testRoomUpdate() {
+    $room = empty_room(1313);
+    $room['rate'] = 3456;
+    $room['bedsize'] = '2 double';
+    $room['sleeps'] = 4;
+    $this->assertTrue(room_update($room) > 0);
+  }
+
+  function testRoom() {
+    $row = room(1313);
+    $this->assertNotNull($row);
+    if ($row) {
+        $this->assertEquals($row['rid'], 1313);
+        $this->assertEquals($row['bedsize'], '2 double');
+        $this->assertEquals($row['sleeps'], 4);
+    }
+  }
+
   function testRoomDelete() {
     //$this->assertEquals(room_delete(1313), 1);
     $cnt = room_delete(1313);

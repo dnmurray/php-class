@@ -62,11 +62,14 @@ function room($rid=0) {
     return empty_room(0);
   }
   $pdo = connect();
-  $room = $pdo->query("SELECT rid, rate, bedsize, sleeps FROM room WHERE rid = :rid",
-          array(':rid' => $rid))->execute()->fetch();
-  if (empty($room)) {
-    // Note the difference for "room not found"
-    return empty_room(-1);
+  $stmt = $pdo->prepare("SELECT rid, rate, bedsize, sleeps FROM room WHERE rid = :rid");
+  $room = empty_room(-1);
+  if ($stmt->execute(array(':rid' => $rid))) {
+      $room = $stmt->fetch();
+      if (empty($room)) {
+          // Note the difference for "room not found"
+          return empty(room(-1));
+      }
   }
   return $room;
 }
