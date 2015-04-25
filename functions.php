@@ -110,14 +110,31 @@ function room_update($room) {
   // https://dev.mysql.com/doc/refman/5.6/en/insert-on-duplicate.html
   $sql = "INSERT INTO room (rid, rate, bedsize, sleeps)
  VALUES (:rid, :rate, :bedsize, :sleeps)
- ON DUPLICATE KEY UPDATE SET rate = :rate, bedsize = :bedsize, sleeps = :sleeps";
-  $result = $pdo->query($sql, $ph)->execute();
-  return $result->rowCount();
+ ON DUPLICATE KEY UPDATE rate = :rate, bedsize = :bedsize, sleeps = :sleeps";
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute($ph);
+  return $stmt->rowCount();
 }
 
 function room_delete($rid) {
   $pdo = connect();
   $sql = "DELETE FROM room WHERE rid = :rid";
-  $result = $pdo->query($sql, array(':rid' => $rid))->execute();
-  return $result->rowCount();
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute(array(':rid' => $rid));
+  return $stmt->rowCount();
+}
+
+function to_string($val) {
+    if (is_null($val)) {
+        return 'null';
+    }
+    elseif (is_bool($val)) {
+        return $val ? 'true' : 'false';
+    }
+    elseif (is_array($val) || is_object($val)) {
+        return print_r($val, true);
+    }
+    else {
+        return (string) $val;
+    }
 }

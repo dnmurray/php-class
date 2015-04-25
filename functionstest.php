@@ -26,7 +26,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 
   function testConnect() {
     $pdo = connect();
-    $this->assertNotNull();
+    $this->assertNotNull($pdo);
   }
 
   function testRoomAdd() {
@@ -34,6 +34,12 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
     $room['rate'] = 1234;
     $room['bedsize'] = 'king';
     $room['sleeps'] = 2;
-    $this->assertroom_update($room);
+    $this->assertEquals(room_update($room), 1);
+  }
+
+  function testRoomDelete() {
+    //$this->assertEquals(room_delete(1313), 1);
+    $cnt = room_delete(1313);
+    $this->assertEquals($cnt, 1);
   }
 }
