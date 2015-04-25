@@ -6,18 +6,13 @@
  */
 
 require_once('functions.php');
-require_once('PHPUnit.php');
+//require_once('PHPUnit.php');
 
 // https://pear.php.net/package/PHPUnit/docs/latest/PHPUnit/PHPUnit_TestCase.html
-class FunctionsTest extends PHPUnit_TestCase {
+class FunctionsTest extends PHPUnit_Framework_TestCase {
 
   // contains the internal data, for the test @TODO
   var $data;
-
-  // constructor of the test suite
-  function FunctionsTest($name) {
-    $this->PHPUnit_TestCase($name);
-  }
 
   // called before the test functions will be executed this function is
   // defined in PHPUnit_TestCase and overwritten here

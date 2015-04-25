@@ -30,8 +30,8 @@ function connect() {
     // Well, that's not good.
     // There's several things we can do at this point, none of them good.
     // For now, just throw the error up on the page.
-    print_r($e);
-    die("crash.\n");
+      print_r($e->errorInfo);
+    die($e->getMessage() . "\n");
   }
   return $pdo;
 }

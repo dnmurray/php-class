@@ -7,7 +7,7 @@
  */
 
 require_once('functions_test.php');
-require_once('PHPUnit.php');
+//require_once('PHPUnit.php');
 
 $suite  = new PHPUnit_TestSuite("FunctionsTest");
 $result = PHPUnit::run($suite);
