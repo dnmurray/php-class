@@ -45,7 +45,9 @@ function connect() {
  */
 function roomlist() {
   $pdo = connect();
-  return $pdo->query("SELECT * FROM room")->execute();
+  $stmt = $pdo->query("SELECT * FROM room");
+  $stmt->execute();
+  return $stmt;
 }
 
 /**
@@ -58,7 +60,7 @@ function roomlist() {
  *   it's a new room (rid=0), an array of empty elements is returned.
  */
 function room($rid=0) {
-  if ($rid == 0) {
+  if (empty($rid)) {
     return empty_room(0);
   }
   $pdo = connect();
@@ -127,6 +129,28 @@ function room_delete($rid) {
   return $stmt->rowCount();
 }
 
+/**
+ * Handle room form requests.
+ */
+function process_room_form() {
+    if (empty($_POST)) {
+        $room = room(@$_GET['r']);
+        $rid = $room['rid'];
+        if ($rid < 1) {
+            $rid = '';
+        }
+        return $room;
+    }
+    // Check for changes and update the DB
+    // @TODO validation
+    // update the db
+    if (room_update($_POST)) {
+        // @TODO test
+        header("Location: roomlist.php?success");
+    }
+}
+
+// utility functions
 function to_string($val) {
     if (is_null($val)) {
         return 'null';

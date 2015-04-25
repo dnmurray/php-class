@@ -55,6 +55,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  function testRoomList() {
+      $rows = roomlist();
+      $this->assertTrue($rows->rowCount() > 0);
+  }
+
   function testRoomDelete() {
     //$this->assertEquals(room_delete(1313), 1);
     $cnt = room_delete(1313);
