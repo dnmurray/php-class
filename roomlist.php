@@ -1,5 +1,14 @@
-<!doctype HTML>
+<?php
+/**
+ * @file
+ * Generate a list of rooms in the database and a link to add a new room.
+ */
 
+// Keep functions in an external file
+include('functions.php');
+// Generate the room list result set from the database.
+$rooms = roomlist();
+?><!doctype HTML>
 <html lang="en-US">
 
 <head>
@@ -11,9 +20,13 @@
 </head>
 
 <body>
-	<div class="main-wrap">
-	<a href="room.php">Add a Room</a>
-	</div>	
+    <div class="main-wrap">
+        <ul>
+            <?php foreach ($rooms->fetch() as $room): ?>
+                <li><a href="room.php?r="<?php print $room['rid']; ?>">Fix Me</a></li>
+            <?php endforeach; ?>
+        </ul>
+	    <a href="room.php">Add a Room</a>
+	</div>
 </body>
-
 </html>
