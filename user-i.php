@@ -1,4 +1,7 @@
 <?php
 // populate the user table for testing
 include('functions.php');
-add_user('test', 'thequick');
+$rows = user_add('test', 'thequick');
+if ($rows == 0) {
+    print "user not added\n";
+}

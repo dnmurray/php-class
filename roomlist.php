@@ -9,7 +9,7 @@
 // Keep functions in an external file
 include('functions.php');
 // Logged in?
-check_logged_in('roomlist.php');
+check_logged_in();
 // Generate the room list result set from the database.
 $rooms = roomlist();
 ?><!doctype HTML>

@@ -5,4 +5,4 @@ create table user (
        password varchar(255) not null,
        password_expired bool default '1',
        primary key (uid),
-       index (username));
+       unique index (username));

@@ -156,7 +156,11 @@ function process_room_form() {
 function check_logged_in($from) {
     session_start();
     if (empty($_SESSION['username'])) {
-        header('Location: login.php?redirect=' . urlencode($from));
+        if (empty($from)) {
+            $from = $_SERVER['REQUEST_URI'];
+        }
+        $_SESSION['login_redirect'] = $from;
+        header('Location: login.php');
         exit();
     }
 }
@@ -164,7 +168,8 @@ function check_logged_in($from) {
 /**
  * Add a user to the database.
  */
-function add_user($username, $password) {
+function user_add($username, $password) {
+    // @TODO duplicate usernames??!
     $pdo = connect();
     $sql = "INSERT INTO user (username, password)
  VALUES (:username, :password)";
@@ -176,6 +181,18 @@ function add_user($username, $password) {
                   );
     $stmt->execute($args);
     return $stmt->rowCount();
+}
+
+/**
+ * Load the user row for a specific username.
+ */
+function user_load($username) {
+    $pdo = connect();
+    $sql = "SELECT * FROM user WHERE username = :username";
+    $stmt = $pdo->prepare($sql);
+    $args = array(':username' => $username);
+    $stmt->execute($args);
+    return $stmt->fetch();
 }
 
 // utility functions

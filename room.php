@@ -5,9 +5,10 @@
  */
 include('functions.php');
 $room = process_room_form();
-$rid = $root['rid'];
+$rid = $room['rid'];
 if ($rid < 0) {
-    header('Location: roomlist.php?notfound'
+    header('Location: roomlist.php?notfound');
+}
 ?><!DOCTYPE html>
 <html>
 
