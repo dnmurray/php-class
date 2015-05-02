@@ -150,6 +150,34 @@ function process_room_form() {
     }
 }
 
+/**
+ * Make sure the user has been logged in.
+ */
+function check_logged_in($from) {
+    session_start();
+    if (empty($_SESSION['username'])) {
+        header('Location: login.php?redirect=' . urlencode($from));
+        exit();
+    }
+}
+
+/**
+ * Add a user to the database.
+ */
+function add_user($username, $password) {
+    $pdo = connect();
+    $sql = "INSERT INTO user (username, password)
+ VALUES (:username, :password)";
+    $stmt = $pdo->prepare($sql);
+    $enc_pwd = password_hash($password, PASSWORD_DEFAULT);
+    $args = array(
+                  ':username' => $username,
+                  ':password' => $enc_pwd,
+                  );
+    $stmt->execute($args);
+    return $stmt->rowCount();
+}
+
 // utility functions
 function to_string($val) {
     if (is_null($val)) {

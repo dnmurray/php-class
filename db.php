@@ -14,7 +14,6 @@ class DB { // extends what? {
   public function connect() {
     global $conf;
     if (empty($conf['db']) || empty($conf['db_user']) || empty($conf['db_pwd'])) {
-      // @TODO This is not a good thing to show to the users.
       die("database connection string not configured properly\n");
     }
     // We hard-coded localhost here, but extending to support a host and port

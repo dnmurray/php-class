@@ -5,6 +5,9 @@
  */
 include('functions.php');
 $room = process_room_form();
+$rid = $root['rid'];
+if ($rid < 0) {
+    header('Location: roomlist.php?notfound'
 ?><!DOCTYPE html>
 <html>
 
@@ -21,7 +24,7 @@ box-shadow: 9px 9px 22px -10px rgba(0,0,0,0.75); font-family:arial; text-align:l
 			<tr>
 				<td>Room Number:</td>
 				<?php // @TODO no edit here when updating a row ?>
-				<td><input type="text" name="room_num" value="<?php print $rid; ?>""></td>
+				<td><input type="text" name="room_num" value="<?php print $room['rid']; ?>"></td>
 			</tr>
 			<tr>
 				<td>Bed Type</td>
