@@ -70,7 +70,7 @@ function room($rid=0) {
       $room = $stmt->fetch();
       if (empty($room)) {
           // Note the difference for "room not found"
-          return empty(room(-1));
+          return empty_room(-1);;
       }
   }
   return $room;
@@ -90,35 +90,31 @@ function empty_room($rid) {
     'rid' => $rid,
     'rate' => 0,
     'bedsize' => '',
-    'sleeps' => 0,
+    'sleeps' => 2,
   );
 }
 
 /**
- * Update a room row (or insert as necessary).
+ * Helper function to execute a sql statement, with arguments
  *
- * @param array $room
- *   Assoc array of room fields.
+ * @param string $sql
+ *   SQL statement to run, with placeholders
+ * @param array $args
+ *   Arguments for $sql
  *
- * @return int
- *   Number of rows affected.
+ * @return array
+ *   Two element array, pdo object, rowCount or FALSE if error
  */
-function room_update($room) {
-  // Walk through the array and convert the room array to a placeholder array.
-  $ph = array();
-  foreach ($room as $key => $value) {
-    if (is_string($key)) {
-      $ph[":{$key}"] = $value;
-    }
-  }
+function sql_execute($sql, $args, $desc) {
   $pdo = connect();
-  // https://dev.mysql.com/doc/refman/5.6/en/insert-on-duplicate.html
-  $sql = "INSERT INTO room (rid, rate, bedsize, sleeps)
- VALUES (:rid, :rate, :bedsize, :sleeps)
- ON DUPLICATE KEY UPDATE rate = :rate, bedsize = :bedsize, sleeps = :sleeps";
   $stmt = $pdo->prepare($sql);
-  $stmt->execute($ph);
-  return $stmt->rowCount();
+  $stmt->execute($args);
+  $err = $pdo->errorInfo();
+  if ($err[0] != '00000') {
+      msg_add('Insert failed: ' . print_r($err, TRUE));
+      return array($pdo, FALSE);
+  }
+  return array($pdo, $stmt->rowCount());
 }
 
 function room_delete($rid) {
@@ -130,30 +126,9 @@ function room_delete($rid) {
 }
 
 /**
- * Handle room form requests.
- */
-function process_room_form() {
-    if (empty($_POST)) {
-        $room = room(@$_GET['r']);
-        $rid = $room['rid'];
-        if ($rid < 1) {
-            $rid = '';
-        }
-        return $room;
-    }
-    // Check for changes and update the DB
-    // @TODO validation
-    // update the db
-    if (room_update($_POST)) {
-        // @TODO test
-        header("Location: roomlist.php?success");
-    }
-}
-
-/**
  * Make sure the user has been logged in.
  */
-function check_logged_in($from) {
+function check_logged_in($from = '') {
     session_start();
     if (empty($_SESSION['username'])) {
         if (empty($from)) {
@@ -193,6 +168,46 @@ function user_load($username) {
     $args = array(':username' => $username);
     $stmt->execute($args);
     return $stmt->fetch();
+}
+
+/**
+ * Add a message to be rendered on the next page load.
+ */
+function msg_add($msg, $sev = 'bg-success') {
+    if (empty($_SESSION['msg'])) {
+        $_SESSION['msg'] = array();
+    }
+    $_SESSION['msg'][] = array('msg' => $msg, 'sev' => $sev);
+}
+
+/**
+ * Helper function to render any messages on the page.
+ *
+ * $msg (should come from $_SESSION
+ */
+function msg_render() {
+    if (empty($_SESSION['msg'])) {
+        return;
+    }
+    foreach ($_SESSION['msg'] as $msg) {
+        print '<h5 class="' . $msg['sev'] . '">' . $msg['msg'] . "</h5>\n";
+    }
+    $_SESSION['msg'] = array();
+}
+
+/**
+ * Return any tags we need in the <head> of most/all pages.
+ */
+function head_elements() {
+    return <<<EOT
+	<link href="css/bates.css" rel="stylesheet"></link>
+EOT;
+}
+
+function dbg($val) {
+    echo "<pre>\n";
+    print to_string($val);
+    echo "</pre>\n";
 }
 
 // utility functions

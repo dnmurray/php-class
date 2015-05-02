@@ -1,0 +1,4 @@
+h5[class*=" bg-"],
+h5[class^="bg-"] {
+		padding: 10px 0;
+}

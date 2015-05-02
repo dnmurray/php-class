@@ -1,17 +1,12 @@
 <?php
 /**
  * @file
- * Generate a list of rooms in the database and a link to add a new room.
+ * Homepage
  */
 
-// @TODO success message?
-
-// Keep functions in an external file
 include('functions.php');
-// Logged in?
-check_logged_in();
-// Generate the room list result set from the database.
-$rooms = roomlist();
+
+// @TODO
 ?><!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,7 +14,7 @@ $rooms = roomlist();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-		<title>Room List</title>
+    <title>Homepage - Bates Motel</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet">
@@ -34,27 +29,16 @@ $rooms = roomlist();
     <![endif]-->
   </head>
   <body>
-    <h1>Room List</h1>
-		<?php msg_render(); ?>
-		<div class="main-wrap">
-      <ul>
-        <?php while ($room = $rooms->fetch()): ?>
-          <li><a href="room.php?r=<?php print $room['rid']; ?>">Fix Me</a></li>
-        <?php endwhile; ?>
-      </ul>
-	    <a href="room.php">Add a Room</a>
-		</div>
+    <h1>Welcome to the Bates Motel</h1>
+		<h4>You check in, but you can't checkout.</h4>
+
+		<ul>
+			<li><a href="roomlist.php">Room List (admin)</a></li>
+		</ul>
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.js"></script>
   </body>
-</html>
-
-
-<!doctype HTML>
-<html lang="en-US">
-
-	<body>
-	</body>
 </html>
