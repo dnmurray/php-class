@@ -2,3 +2,15 @@ h5[class*=" bg-"],
 h5[class^="bg-"] {
 		padding: 10px 0;
 }
+
+/* homepage changes */
+.homepage ul {
+		font-size: 18px;
+		font-weight: bold;
+		list-style: none;
+		padding-top: 30px;
+}
+
+.homepage li {
+		padding-top: 15px;
+}

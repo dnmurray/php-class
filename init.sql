@@ -18,6 +18,7 @@ create table guest (
        zip varchar(10),
        phone varchar(10),
        email varchar(100),
+			 password varchar(255),
 			 last_upd timestamp,
        primary key (gid));
 
