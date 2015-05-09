@@ -64,7 +64,7 @@ function room($rid=0) {
     return empty_room(0);
   }
   $pdo = connect();
-  $stmt = $pdo->prepare("SELECT rid, rate, bedsize, sleeps FROM room WHERE rid = :rid");
+  $stmt = $pdo->prepare("SELECT rid, rate, roomsize, sleeps, image FROM room WHERE rid = :rid");
   $room = empty_room(-1);
   if ($stmt->execute(array(':rid' => $rid))) {
       $room = $stmt->fetch();
@@ -89,7 +89,7 @@ function empty_room($rid) {
   return array(
     'rid' => $rid,
     'rate' => 0,
-    'bedsize' => '',
+    'roomsize' => 'd',
     'sleeps' => 2,
   );
 }
@@ -111,7 +111,7 @@ function sql_execute($sql, $args, $desc) {
   $stmt->execute($args);
   $err = $pdo->errorInfo();
   if ($err[0] != '00000') {
-      msg_add('Insert failed: ' . print_r($err, TRUE));
+      msg_add($desc . ' failed: ' . $err[2], 'bg-danger');
       return array($pdo, FALSE);
   }
   return array($pdo, $stmt->rowCount());
@@ -201,6 +201,9 @@ function msg_render() {
 function head_elements() {
     return <<<EOT
 	<link href="css/bates.css" rel="stylesheet"></link>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/bates.js"></script>
 EOT;
 }
 

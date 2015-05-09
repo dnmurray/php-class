@@ -1,0 +1,12 @@
+http://www.smarty.net/download
+cd ~
+git clone https://github.com/smarty-php/smarty.git
+cd smarty
+git co v3.1.21
+http://www.smarty.net/quick_install
+sudo mkdir -p /usr/local/lib/php/Smarty
+sudo cp -r /home/dnm/smarty/libs/* /usr/local/lib/php/Smarty/
+cd ../php-class/
+mkdir -p smarty/templates smarty/templates_c smarty/cache smarty/configs
+chmod 775 smarty/templates_c smarty/cache
+sudo chown http:http smarty/cache smarty/templates_c

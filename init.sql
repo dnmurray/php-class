@@ -2,7 +2,7 @@ drop table if exists room;
 create table room (
        rid int not null,
        rate decimal(8,2),
-       bedsize varchar(32) default 'double',
+       roomsize varchar(3) not null references room_size(abbr) default ('d'),
        sleeps int default '2',
 			 last_upd timestamp,
        primary key (rid));
@@ -42,3 +42,16 @@ create table user (
 			 last_upd timestamp,
        primary key (uid),
        index (username));
+
+drop table if exists room_size;
+create table room_size (
+			 abbr varchar(3) not null,
+			 room_size varchar(100) not null,
+			 primary key (abbr));
+
+insert into room_size (abbr, room_size) values ('k', 'King');
+insert into room_size values ('ks', 'King w/ Sofabed');
+insert into room_size values ('d', 'Double');
+insert into room_size values ('2d', 'Two Doubles');
+insert into room_size values ('q', 'Queen');
+insert into room_size values ('2q', 'Two Queens');

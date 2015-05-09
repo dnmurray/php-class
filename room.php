@@ -24,20 +24,31 @@ function room_update($room) {
   }
 	if ($room['upd'] == 0) {
 		// New row add
-		$sql = "INSERT INTO room (rid, rate, bedsize, sleeps)
-							VALUES (:rid, :rate, :bedsize, :sleeps)";
+		$sql1 = "INSERT INTO room (rid, rate, roomsize, sleeps";
+		$sql2 = " VALUES (:rid, :rate, :roomsize, :sleeps";
+		if (!empty($room['image'])) {
+			$sql1 .= ', image';
+			$sql2 .= ', :image';
+		}
+		$sql = $sql1 . ")" . $sql2 . ")";
 		$desc = 'Insert Room';
 	}
 	else {
 		// @TODO use a session var, see room.php
 		$ph[':rid'] = $room['upd'];
-		$sql = "UPDATE room SET rate = :rate, bedsize = :bedsize, sleeps = :sleeps WHERE rid = :rid";
+		$sql1 = "UPDATE room SET rate = :rate, bedsize = :bedsize, sleeps = :sleeps";
+		$sql2 = " WHERE rid = :rid";
+		if (!empty($room['image'])) {
+			$sql1 .= ', image = :image';
+		}
+		$sql = $sql1 . $sql2;
 		$desc = 'Update Room';
 	}
 	unset($ph[':upd']);
 	list($pdo, $cnt) = sql_execute($sql, $ph, $desc);
 	if ($cnt === FALSE) {
 		header('Location: roomlist.php');
+		exit;
 	}
 	if ($room['upd'] == 0) {
 		$rtn = $cnt > 0 ? $pdo->lastInsertId() : 0;
@@ -63,6 +74,14 @@ function process_room_form() {
     }
     return $room;
   }
+	// Did we get an uploaded file?
+	if (!empty($_FILES['image'])) {
+		// @TODO does directory exist?
+		$target = "images/uploads/" . $_FILES['image']['name'];
+		if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+			$_POST['image'] = $target;
+		}
+	}
   // Check for changes and update the DB
   // @TODO validation
   // update the db
@@ -76,8 +95,25 @@ function process_room_form() {
 	exit();
 }
 
+// Generate the options html for the select tag for room sizes.
+function room_sizes($room) {
+	$pdo = connect();
+	$sql = "SELECT * FROM room_size ORDER BY room_size";
+	$output = '';
+	foreach ($pdo->query($sql) as $row) {
+		$output .= '<option value="' . $row['abbr'] . '" ';
+		if ($row['abbr'] == $room['roomsize']) {
+			$output .= ' selected';
+		}
+		$output .= '>' . $row['room_size'] . "</option>\n";
+	}
+	return $output;
+}
+
 check_logged_in();
 $room = process_room_form();
+// Select options
+$options = room_sizes($room);
 // Clean up rid for new add
 $rid = $room['rid'] ? $room['rid'] : '';
 ?><!DOCTYPE html>
@@ -93,7 +129,7 @@ $rid = $room['rid'] ? $room['rid'] : '';
 -moz-box-shadow: 9px 9px 22px -10px rgba(0,0,0,0.75);
 box-shadow: 9px 9px 22px -10px rgba(0,0,0,0.75); font-family:arial; text-align:left;">
 	<h1 style="text-align:left; color:rgb(9, 187, 9);">Room Information</h1>
-	<form method="post" action="room.php">
+	<form method="post" action="room.php" enctype="multipart/form-data">
 		<table>
 			<tr><td colspan="2" style="text-align:left;">
 				<h3><?php if ($rid): ?>
@@ -112,12 +148,8 @@ box-shadow: 9px 9px 22px -10px rgba(0,0,0,0.75); font-family:arial; text-align:l
 			<tr>
 				<td>Bed Type</td>
 				<td>
-					<select style="width:100%" name="bedsize">
-<?php // @TODO what other types of rooms do we need ?>
-<?php // @TODO (later) automate this ?>
-<option value="double" <?php print $room['bedsize'] == 'double' ? 'selected' : ''; ?>>Double</option>
-<option value="queen"  <?php print $room['bedsize'] == 'queen' ? 'selected' : ''; ?>>Queen</option>
-<option value="king"  <?php print $room['bedsize'] == 'king' ? 'selected' : ''; ?>>King</option>
+					<select style="width:100%" name="roomsize">
+						<?php print $options; ?>
 					</select>
 				</td>
 			</tr>
@@ -128,6 +160,15 @@ box-shadow: 9px 9px 22px -10px rgba(0,0,0,0.75); font-family:arial; text-align:l
 			<tr>
 				<td>Number of People</td>
 <td><input type="text" name="sleeps" value="<?php print $room['sleeps']; ?>"></td>
+			</tr>
+			<tr>
+				<td>Picture</td>
+				<td>
+					<?php if (!empty($room['image'])): ?>
+						<img src="<?php print $room['image']; ?>" alt="Room Picture" />
+					<?php endif; ?>
+					<input type="file" name="image" />
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2" ><br></td>
