@@ -4,7 +4,18 @@
  * Functions to implement pages for class.
  */
 
+if (!file_exists('conf.php')) {
+  // @TODO create this page
+  header('Location: conf-required.html');
+  exit();
+}
 require_once('conf.php');
+
+if (empty($conf['smarty_libs'])) {
+  print "Please update conf.php to add the key 'smarty_libs' and point to the location of the Smarty class libraries (no trailing slash).\n";
+  exit();
+}
+require($conf['smarty_libs'] . '/Smarty.class.php');
 
 /**
  * Connect to the database.
@@ -30,7 +41,7 @@ function connect() {
     // Well, that's not good.
     // There's several things we can do at this point, none of them good.
     // For now, just throw the error up on the page.
-      print_r($e->errorInfo);
+    print_r($e->errorInfo);
     die($e->getMessage() . "\n");
   }
   return $pdo;
@@ -46,7 +57,6 @@ function connect() {
 function roomlist() {
   $pdo = connect();
   $stmt = $pdo->query("SELECT * FROM room");
-  $stmt->execute();
   return $stmt;
 }
 
@@ -67,11 +77,11 @@ function room($rid=0) {
   $stmt = $pdo->prepare("SELECT rid, rate, roomsize, sleeps, image FROM room WHERE rid = :rid");
   $room = empty_room(-1);
   if ($stmt->execute(array(':rid' => $rid))) {
-      $room = $stmt->fetch();
-      if (empty($room)) {
-          // Note the difference for "room not found"
-          return empty_room(-1);;
-      }
+    $room = $stmt->fetch();
+    if (empty($room)) {
+      // Note the difference for "room not found"
+      return empty_room(-1);;
+    }
   }
   return $room;
 }
@@ -111,8 +121,8 @@ function sql_execute($sql, $args, $desc) {
   $stmt->execute($args);
   $err = $pdo->errorInfo();
   if ($err[0] != '00000') {
-      msg_add($desc . ' failed: ' . $err[2], 'bg-danger');
-      return array($pdo, FALSE);
+    msg_add($desc . ' failed: ' . $err[2], 'bg-danger');
+    return array($pdo, FALSE);
   }
   return array($pdo, $stmt->rowCount());
 }
@@ -129,55 +139,55 @@ function room_delete($rid) {
  * Make sure the user has been logged in.
  */
 function check_logged_in($from = '') {
-    session_start();
-    if (empty($_SESSION['username'])) {
-        if (empty($from)) {
-            $from = $_SERVER['REQUEST_URI'];
-        }
-        $_SESSION['login_redirect'] = $from;
-        header('Location: login.php');
-        exit();
+  session_start();
+  if (empty($_SESSION['username'])) {
+    if (empty($from)) {
+      $from = $_SERVER['REQUEST_URI'];
     }
+    $_SESSION['login_redirect'] = $from;
+    header('Location: login.php');
+    exit();
+  }
 }
 
 /**
  * Add a user to the database.
  */
 function user_add($username, $password) {
-    // @TODO duplicate usernames??!
-    $pdo = connect();
-    $sql = "INSERT INTO user (username, password)
+  // @TODO duplicate usernames??!
+  $pdo = connect();
+  $sql = "INSERT INTO user (username, password)
  VALUES (:username, :password)";
-    $stmt = $pdo->prepare($sql);
-    $enc_pwd = password_hash($password, PASSWORD_DEFAULT);
-    $args = array(
-                  ':username' => $username,
-                  ':password' => $enc_pwd,
-                  );
-    $stmt->execute($args);
-    return $stmt->rowCount();
+  $stmt = $pdo->prepare($sql);
+  $enc_pwd = password_hash($password, PASSWORD_DEFAULT);
+  $args = array(
+    ':username' => $username,
+    ':password' => $enc_pwd,
+  );
+  $stmt->execute($args);
+  return $stmt->rowCount();
 }
 
 /**
  * Load the user row for a specific username.
  */
 function user_load($username) {
-    $pdo = connect();
-    $sql = "SELECT * FROM user WHERE username = :username";
-    $stmt = $pdo->prepare($sql);
-    $args = array(':username' => $username);
-    $stmt->execute($args);
-    return $stmt->fetch();
+  $pdo = connect();
+  $sql = "SELECT * FROM user WHERE username = :username";
+  $stmt = $pdo->prepare($sql);
+  $args = array(':username' => $username);
+  $stmt->execute($args);
+  return $stmt->fetch();
 }
 
 /**
  * Add a message to be rendered on the next page load.
  */
 function msg_add($msg, $sev = 'bg-success') {
-    if (empty($_SESSION['msg'])) {
-        $_SESSION['msg'] = array();
-    }
-    $_SESSION['msg'][] = array('msg' => $msg, 'sev' => $sev);
+  if (empty($_SESSION['msg'])) {
+    $_SESSION['msg'] = array();
+  }
+  $_SESSION['msg'][] = array('msg' => $msg, 'sev' => $sev);
 }
 
 /**
@@ -186,45 +196,59 @@ function msg_add($msg, $sev = 'bg-success') {
  * $msg (should come from $_SESSION
  */
 function msg_render() {
-    if (empty($_SESSION['msg'])) {
-        return;
-    }
-    foreach ($_SESSION['msg'] as $msg) {
-        print '<h5 class="' . $msg['sev'] . '">' . $msg['msg'] . "</h5>\n";
-    }
-    $_SESSION['msg'] = array();
+  if (empty($_SESSION['msg'])) {
+    return;
+  }
+  foreach ($_SESSION['msg'] as $msg) {
+    print '<h5 class="' . $msg['sev'] . '">' . $msg['msg'] . "</h5>\n";
+  }
+  $_SESSION['msg'] = array();
 }
 
 /**
  * Return any tags we need in the <head> of most/all pages.
  */
 function head_elements() {
-    return <<<EOT
+  return <<<EOT
 	<link href="css/bates.css" rel="stylesheet"></link>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- jQuery (necessary for Bootstrap JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="js/bates.js"></script>
 EOT;
 }
 
 function dbg($val) {
-    echo "<pre>\n";
-    print to_string($val);
-    echo "</pre>\n";
+  echo "<pre>\n";
+  print to_string($val);
+  echo "</pre>\n";
 }
 
 // utility functions
 function to_string($val) {
-    if (is_null($val)) {
-        return 'null';
-    }
-    elseif (is_bool($val)) {
-        return $val ? 'true' : 'false';
-    }
-    elseif (is_array($val) || is_object($val)) {
-        return print_r($val, true);
-    }
-    else {
-        return (string) $val;
-    }
+  if (is_null($val)) {
+    return 'null';
+  }
+  elseif (is_bool($val)) {
+    return $val ? 'true' : 'false';
+  }
+  elseif (is_array($val) || is_object($val)) {
+    return print_r($val, true);
+  }
+  else {
+    return (string) $val;
+  }
+}
+
+class PSmarty extends Smarty {
+
+  public function __construct() {
+    //$this->assign('head', '');
+  }
+
+  /** might use later
+   // override display function to add functionality for all pages.
+   public function display($template = null, $cache_id = null, $compile_id = null, $parent = null) {
+   parent::display($template, $cache_id, $compile_id, $parent);
+   }
+  **/
 }

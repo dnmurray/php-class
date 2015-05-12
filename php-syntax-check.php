@@ -9,21 +9,21 @@
 // Default current directory
 $dir = '.';
 if (!empty($argv[1])) {
-    $dir = $argv[1];
+  $dir = $argv[1];
 }
 $h = opendir($dir);
 $failed = 254;
 if ($h) {
-    $failed = 0;
-    while ($file = readdir($h)) {
-        if (preg_match('/\.php$/', $file)) {
-            $out = `php -l $file 2>&1`;
-            if (!preg_match('/^No syntax/', $out)) {
-                print $out;
-                $failed = 255;
-            }
-        }
+  $failed = 0;
+  while ($file = readdir($h)) {
+    if (preg_match('/\.php$/', $file)) {
+      $out = `php -l $file 2>&1`;
+      if (!preg_match('/^No syntax/', $out)) {
+        print $out;
+        $failed = 255;
+      }
     }
-    closedir($h);
+  }
+  closedir($h);
 }
 exit($failed);

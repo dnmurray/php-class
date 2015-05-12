@@ -2,3 +2,5 @@
 db_t.php
 conf.php
 php_errors.log
+cache
+templates_c

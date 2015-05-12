@@ -49,15 +49,15 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
     $row = room(1313);
     $this->assertNotNull($row);
     if ($row) {
-        $this->assertEquals($row['rid'], 1313);
-        $this->assertEquals($row['bedsize'], '2 double');
-        $this->assertEquals($row['sleeps'], 4);
+      $this->assertEquals($row['rid'], 1313);
+      $this->assertEquals($row['bedsize'], '2 double');
+      $this->assertEquals($row['sleeps'], 4);
     }
   }
 
   function testRoomList() {
-      $rows = roomlist();
-      $this->assertTrue($rows->rowCount() > 0);
+    $rows = roomlist();
+    $this->assertTrue($rows->rowCount() > 0);
   }
 
   function testRoomDelete() {

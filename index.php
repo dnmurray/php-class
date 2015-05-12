@@ -6,39 +6,23 @@
 
 include('functions.php');
 
-// @TODO
-?><!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Homepage - Bates Motel</title>
-
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-
-		<?php print head_elements(); ?>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body class="homepage">
-		<div class="text-center">
-			<h1>Welcome to the Bates Motel</h1>
-			<h4>You check in, but you don't checkout.</h4>
-
-			<ul>
-				<li><a href="roomlist.php">Room List (admin)</a></li>
-				<li><a href="reserve.php">Reserve a Room</a></li>
-			</ul>
-		</div>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.js"></script>
-  </body>
-</html>
+$options = array(
+  array(
+    'href' => 'roomlist.php',
+    'desc' => 'Room List (admin)',
+  ),
+  array(
+    'href' => 'reserve.php',
+    'desc' => 'Reserve a Room',
+  ),
+);
+$smarty = new Smarty();
+// Assign variables for html.tpl
+$smarty->assign('head', '');
+$smarty->assign('body_class', 'homepage');
+// Assign variables for index.tpl
+$smarty->assign('options', $options);
+// Tell html.tpl to render index.tpl
+$smarty->assign('render_tpl', 'index.tpl');
+// Display the page.
+$smarty->display('html.tpl');
