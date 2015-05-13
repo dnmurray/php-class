@@ -18,6 +18,7 @@ $options = array(
 );
 $smarty = new Smarty();
 // Assign variables for html.tpl
+$smarty->assign('title', 'Homepage');
 $smarty->assign('head', '');
 $smarty->assign('body_class', 'homepage');
 // Assign variables for index.tpl
