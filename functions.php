@@ -217,6 +217,18 @@ function head_elements() {
 EOT;
 }
 
+/**
+ * Converts an array to an html list of options.
+ */
+function options($options, $selected = NULL) {
+  $output = '';
+  foreach ($options as $key => $value) {
+    $selected = $key == $selected ? ' selected' : '';
+    $output .= "<option value=\"{$key}\"{$selected}>{$value}</option>\n";
+  }
+  return $output;
+}
+
 function dbg($val) {
   echo "<pre>\n";
   print to_string($val);

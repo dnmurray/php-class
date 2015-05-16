@@ -4,7 +4,8 @@ create table room (
        rate decimal(8,2),
        roomsize varchar(3) not null references room_size(abbr) default ('d'),
        sleeps int default '2',
-			 last_upd timestamp,
+       image varchar(1024),
+       last_upd timestamp,
        primary key (rid));
 
 drop table if exists guest;
@@ -18,8 +19,8 @@ create table guest (
        zip varchar(10),
        phone varchar(10),
        email varchar(100),
-			 password varchar(255),
-			 last_upd timestamp,
+       password varchar(255),
+       last_upd timestamp,
        primary key (gid));
 
 drop table if exists reservation;
@@ -28,7 +29,7 @@ create table reservation (
        gid int not null,
        arrival date not null,
        num_nights int not null,
-			 last_upd timestamp,
+       last_upd timestamp,
        primary key (rid,gid),
        index ix_reservation_rid (rid),
        index ix_reservation_gid (gid));
@@ -39,15 +40,15 @@ create table user (
        username varchar(25) not null,
        password varchar(255) not null,
        password_expired bool default '1',
-			 last_upd timestamp,
+       last_upd timestamp,
        primary key (uid),
        index (username));
 
 drop table if exists room_size;
 create table room_size (
-			 abbr varchar(3) not null,
-			 room_size varchar(100) not null,
-			 primary key (abbr));
+       abbr varchar(3) not null,
+       room_size varchar(100) not null,
+       primary key (abbr));
 
 insert into room_size (abbr, room_size) values ('k', 'King');
 insert into room_size values ('ks', 'King w/ Sofabed');

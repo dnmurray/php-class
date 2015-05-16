@@ -7,9 +7,12 @@ http://www.smarty.net/quick_install
 sudo mkdir -p /usr/local/lib/php/Smarty
 sudo cp -r /home/dnm/smarty/libs/* /usr/local/lib/php/Smarty/
 cd ../php-class/
-mkdir -p smarty/templates smarty/templates_c smarty/cache smarty/configs
-chmod 775 smarty/templates_c smarty/cache
+mkdir templates templates_c cache configs
+chmod 777 templates_c cache
 sudo chown http:http smarty/cache smarty/templates_c
 change php.ini: add :/usr/local/lib/php to open_basedir
 
 http://www.smarty.net/docs/en/
+
+add to conf.php
+              'smarty_libs' => '/usr/local/lib/php/Smarty',
