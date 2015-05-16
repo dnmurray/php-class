@@ -2,14 +2,14 @@ http://www.smarty.net/download
 cd ~
 git clone https://github.com/smarty-php/smarty.git
 cd smarty
-git co v3.1.21
+git checkout v3.1.21
 http://www.smarty.net/quick_install
 sudo mkdir -p /usr/local/lib/php/Smarty
 sudo cp -r /home/dnm/smarty/libs/* /usr/local/lib/php/Smarty/
 cd ../php-class/
 mkdir templates templates_c cache configs
 chmod 777 templates_c cache
-sudo chown http:http smarty/cache smarty/templates_c
+sudo chown http:http cache templates_c
 change php.ini: add :/usr/local/lib/php to open_basedir
 
 http://www.smarty.net/docs/en/
