@@ -27,8 +27,8 @@ drop table if exists reservation;
 create table reservation (
        rid int not null,
        gid int not null,
-       arrival date not null,
-       num_nights int not null,
+       checkin date not null,
+       checkout date not null,
        last_upd timestamp,
        primary key (rid,gid),
        index ix_reservation_rid (rid),

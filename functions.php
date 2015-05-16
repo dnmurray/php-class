@@ -4,6 +4,8 @@
  * Functions to implement pages for class.
  */
 
+$messages = array();
+
 if (!file_exists('conf.php')) {
   // @TODO create this page
   header('Location: conf-required.html');
@@ -122,9 +124,9 @@ function sql_execute($sql, $args, $desc) {
   $err = $pdo->errorInfo();
   if ($err[0] != '00000') {
     msg_add($desc . ' failed: ' . $err[2], 'bg-danger');
-    return array($pdo, FALSE);
+    return array($pdo, FALSE, FALSE);
   }
-  return array($pdo, $stmt->rowCount());
+  return array($pdo, $stmt->rowCount(), $stmt);
 }
 
 function room_delete($rid) {
@@ -184,10 +186,13 @@ function user_load($username) {
  * Add a message to be rendered on the next page load.
  */
 function msg_add($msg, $sev = 'bg-success') {
+  global $messages;
   if (empty($_SESSION['msg'])) {
     $_SESSION['msg'] = array();
   }
   $_SESSION['msg'][] = array('msg' => $msg, 'sev' => $sev);
+  $messages[] = array('msg' => $msg, 'sev' => $sev);
+  dbg($msg);
 }
 
 /**
@@ -196,10 +201,11 @@ function msg_add($msg, $sev = 'bg-success') {
  * $msg (should come from $_SESSION
  */
 function msg_render() {
-  if (empty($_SESSION['msg'])) {
-    return;
+  global $messages;
+  if (!empty($_SESSION['msg'])) {
+    $messages = $_SESSION['msg'];
   }
-  foreach ($_SESSION['msg'] as $msg) {
+  foreach ($messages as $msg) {
     print '<h5 class="' . $msg['sev'] . '">' . $msg['msg'] . "</h5>\n";
   }
   $_SESSION['msg'] = array();
@@ -215,6 +221,66 @@ function head_elements() {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="js/bates.js"></script>
 EOT;
+}
+
+/**
+ * Returns an options list of states in the union.
+ */
+function us_states_opts($sel = NULL) {
+  $states = array(
+    'AL' => 'Alabama',
+    'AK' => 'Alaska',
+    'AZ' => 'Arizona',
+    'AR' => 'Arkansas',
+    'CA' => 'California',
+    'CO' => 'Colorado',
+    'CT' => 'Connecticut',
+    'DE' => 'Delaware',
+    'DC' => 'District of Columbia',
+    'FL' => 'Florida',
+    'GA' => 'Georgia',
+    'HI' => 'Hawaii',
+    'ID' => 'Idaho',
+    'IL' => 'Illinois',
+    'IN' => 'Indiana',
+    'IA' => 'Iowa',
+    'KS' => 'Kansas',
+    'KY' => 'Kentucky',
+    'LA' => 'Louisiana',
+    'ME' => 'Maine',
+    'MD' => 'Maryland',
+    'MA' => 'Massachusetts',
+    'MI' => 'Michigan',
+    'MN' => 'Minnesota',
+    'MS' => 'Mississippi',
+    'MO' => 'Missouri',
+    'MT' => 'Montana',
+    'NE' => 'Nebraska',
+    'NV' => 'Nevada',
+    'NH' => 'New Hampshire',
+    'NJ' => 'New Jersey',
+    'NM' => 'New Mexico',
+    'NY' => 'New York',
+    'NC' => 'North Carolina',
+    'ND' => 'North Dakota',
+    'OH' => 'Ohio',
+    'OK' => 'Oklahoma',
+    'OR' => 'Oregon',
+    'PA' => 'Pennsylvania',
+    'RI' => 'Rhode Island',
+    'SC' => 'South Carolina',
+    'SD' => 'South Dakota',
+    'TN' => 'Tennessee',
+    'TX' => 'Texas',
+    'UT' => 'Utah',
+    'VT' => 'Vermont',
+    'VA' => 'Virginia',
+    'WA' => 'Washington',
+    'WV' => 'West Virginia',
+    'WI' => 'Wisconsin',
+    'WY' => 'Wyoming',
+  );
+  return options($states, $sel);
 }
 
 /**

@@ -17,6 +17,5 @@
         {if $redirect}
 		  <input type="hidden" name="redirect" value="{$redirect}" />
         {/if}
-		<?php endif; ?>
 	  </form>
 	</div>
